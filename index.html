@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Giphy Hunt</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <div class="container">
+        <h1>Giphy Search!</h1>
+        <hr><!--hr tag is where the line under the heading came from-->
+        
+
+        <!-- Here we create  -->
+        <div id="myTopics"></div>
+        <div id="myImages"></div>
+        <div id="myRating"></div>
+        <script type="text/javascript">
+            var apiKey = "DP9cDyLEW0faKfpjghQvAUInFHyRhFRN";
+
+
+            var myTopics = ["dog", "cat", "goat", "worm"];
+            console.log(myTopics);
+            for (var i = 0; i < myTopics.length; i++) {
+                console.log(myTopics[i])
+                var button = $("<button>");
+                console.log(button);
+                $("#myTopics").append(button);
+                button.text(myTopics[i]);
+                button.on("click", function () {
+                    var topic = $(this).text()
+
+                    // Deleting the giphy buttons prior to adding new giphy buttons
+                    // (.empty() is necessary otherwise we will have repeat buttons)
+                    $("#myImages").empty();
+                    console.log(topic);
+                    var queryUrl = `https://api.giphy.com/v1/gifs/search?api_key=DP9cDyLEW0faKfpjghQvAUInFHyRhFRN&q=${topic}&limit=10&offset=0&lang=en`;
+                    $.ajax({
+                        url: queryUrl,
+                        method: "GET"
+                    }).then(function (response) {
+                        console.log(response);
+                        for (var i = 0; i < response.data.length; i++) {
+                            console.log(response.data[i].images["480w_still"].url);
+
+                            var myImage = response.data[i].images["480w_still"].url;
+                            var myAnim = response.data[i].images["downsized"].url;
+
+                            var myRating = response.data[i].rating;
+                            console.log(myRating);
+                            var img = $("<img>")
+                            img.attr("src", myImage);
+                            img.attr("width", "480px");
+
+                            img.attr("myImage", myImage);
+                            img.attr("myAnim", myAnim);
+                            // <img src="${myImage}" myImage="${myImage} myAnim="${myAnim}>
+
+                            $("#myImages").append(img);
+                            img.on("click", function () {
+                                var thisImage = $(this);
+                                console.log(thisImage.attr("src"));
+
+                                var src = thisImage.attr("src");
+                                var still = thisImage.attr("myImage");
+                                var anim = thisImage.attr("myAnim");
+
+                                if (src === still) {
+                                    thisImage.attr("src", anim);
+                                } else {
+                                    thisImage.attr("src", still);
+                                }
+
+                                // <img src="${myAnim}" myImage="${myImage} myAnim="${myAnim}>
+                            });
+                            var p = $("<p>")
+                            p.text("Title:" + response.data[i].title + " Rating " + myRating);
+                            $("#myImages").append(p);
+
+                        //I can't do this anymore. I tried using the movie sovled examples to finish but it just won't work and I'm not a coder.
+
+                                
+                        }
+                    });
+                    console.log("clickMe");
+                    console.log($(this).html());
+                });
+            };
+
+                //add snippets of code to cheat sheet
+                //think more broadly, what is the line/code doing
+
+        </script>
+    </div>
+</body>
+
+</html>
