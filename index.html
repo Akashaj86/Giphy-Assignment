@@ -11,8 +11,18 @@
 <body>
     <div class="container">
         <h1>Giphy Search!</h1>
-        <hr><!--hr tag is where the line under the heading came from-->
-        
+        <hr>
+        <!--hr tag is where the line under the heading came from-->
+
+
+
+        <form id="animal-form">
+            <label for="animal-input">Add a Animal, Yo!</label>
+            <input type="text" id="animal-input"><br>
+
+            <!-- Button triggers new animal to be added -->
+            <input id="add-animal" type="submit" value="Add a animal, Yo!">
+        </form>
 
         <!-- Here we create  -->
         <div id="myTopics"></div>
@@ -24,71 +34,86 @@
 
             var myTopics = ["dog", "cat", "goat", "worm"];
             console.log(myTopics);
-            for (var i = 0; i < myTopics.length; i++) {
-                console.log(myTopics[i])
-                var button = $("<button>");
-                console.log(button);
-                $("#myTopics").append(button);
-                button.text(myTopics[i]);
-                button.on("click", function () {
-                    var topic = $(this).text()
 
-                    // Deleting the giphy buttons prior to adding new giphy buttons
-                    // (.empty() is necessary otherwise we will have repeat buttons)
-                    $("#myImages").empty();
-                    console.log(topic);
-                    var queryUrl = `https://api.giphy.com/v1/gifs/search?api_key=DP9cDyLEW0faKfpjghQvAUInFHyRhFRN&q=${topic}&limit=10&offset=0&lang=en`;
-                    $.ajax({
-                        url: queryUrl,
-                        method: "GET"
-                    }).then(function (response) {
-                        console.log(response);
-                        for (var i = 0; i < response.data.length; i++) {
-                            console.log(response.data[i].images["480w_still"].url);
 
-                            var myImage = response.data[i].images["480w_still"].url;
-                            var myAnim = response.data[i].images["downsized"].url;
+            var addButtons = function () {
+                $("#myTopics").empty();
+                for (var i = 0; i < myTopics.length; i++) {
+                    console.log(myTopics[i])
+                    var button = $("<button class= 'button'>");
+                    console.log(button);
+                    $("#myTopics").append(button);
+                    button.text(myTopics[i]);
 
-                            var myRating = response.data[i].rating;
-                            console.log(myRating);
-                            var img = $("<img>")
-                            img.attr("src", myImage);
-                            img.attr("width", "480px");
-
-                            img.attr("myImage", myImage);
-                            img.attr("myAnim", myAnim);
-                            // <img src="${myImage}" myImage="${myImage} myAnim="${myAnim}>
-
-                            $("#myImages").append(img);
-                            img.on("click", function () {
-                                var thisImage = $(this);
-                                console.log(thisImage.attr("src"));
-
-                                var src = thisImage.attr("src");
-                                var still = thisImage.attr("myImage");
-                                var anim = thisImage.attr("myAnim");
-
-                                if (src === still) {
-                                    thisImage.attr("src", anim);
-                                } else {
-                                    thisImage.attr("src", still);
-                                }
-
-                                // <img src="${myAnim}" myImage="${myImage} myAnim="${myAnim}>
-                            });
-                            var p = $("<p>")
-                            p.text("Title:" + response.data[i].title + " Rating " + myRating);
-                            $("#myImages").append(p);
-
-                        //I can't do this anymore. I tried using the movie sovled examples to finish but it just won't work and I'm not a coder.
-
-                                
-                        }
-                    });
-                    console.log("clickMe");
-                    console.log($(this).html());
-                });
+                };
             };
+
+            $("#add-animal").on("click", function (event) {
+                event.preventDefault();
+                var animalInput = $("#animal-input").val().trim();
+                myTopics.push(animalInput);
+                addButtons();
+            });
+            //called a function below
+            addButtons();
+            //below line affects anything with a class of button due to line 43
+            $(document).on("click", ".button", function () {
+                var topic = $(this).text()
+
+                // Deleting the giphy buttons prior to adding new giphy buttons
+                // (.empty() is necessary otherwise we will have repeat buttons)
+                $("#myImages").empty();
+                console.log(topic);
+                var queryUrl = `https://api.giphy.com/v1/gifs/search?api_key=DP9cDyLEW0faKfpjghQvAUInFHyRhFRN&q=${topic}&limit=10&offset=0&lang=en`;
+                $.ajax({
+                    url: queryUrl,
+                    method: "GET"
+                }).then(function (response) {
+                    console.log(response);
+                    for (var i = 0; i < response.data.length; i++) {
+                        console.log(response.data[i].images["480w_still"].url);
+
+                        var myImage = response.data[i].images["480w_still"].url;
+                        var myAnim = response.data[i].images["downsized"].url;
+
+                        var myRating = response.data[i].rating;
+                        console.log(myRating);
+                        var img = $("<img>")
+                        img.attr("src", myImage);
+                        img.attr("width", "480px");
+
+                        img.attr("myImage", myImage);
+                        img.attr("myAnim", myAnim);
+                        // <img src="${myImage}" myImage="${myImage} myAnim="${myAnim}>
+
+                        $("#myImages").append(img);
+                        img.on("click", function () {
+                            var thisImage = $(this);
+                            console.log(thisImage.attr("src"));
+
+                            var src = thisImage.attr("src");
+                            var still = thisImage.attr("myImage");
+                            var anim = thisImage.attr("myAnim");
+
+                            if (src === still) {
+                                thisImage.attr("src", anim);
+                            } else {
+                                thisImage.attr("src", still);
+                            }
+
+                            // <img src="${myAnim}" myImage="${myImage} myAnim="${myAnim}>
+                        });
+                        var p = $("<p>")
+                        p.text("Title:" + response.data[i].title + " Rating " + myRating);
+                        $("#myImages").append(p);
+
+
+
+                    }
+                });
+                console.log("clickMe");
+                console.log($(this).html());
+            });
 
                 //add snippets of code to cheat sheet
                 //think more broadly, what is the line/code doing
